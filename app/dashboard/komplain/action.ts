@@ -15,6 +15,7 @@ export async function buatKomplain(formData: FormData) {
 
   const subjek = formData.get('subjek') as string
   const deskripsi = formData.get('deskripsi') as string
+  const userId = formData.get("userId") as string
 
   await prisma.komplain.create({
     data: {
