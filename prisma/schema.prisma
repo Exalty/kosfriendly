@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String       @id @default(cuid())
+  nama       String
+  email      String       @unique
+  password   String
+  role       Role         @default(PELANGGAN)
+  komplain   Komplain[]
+  pembayaran Pembayaran[]
+  kamar      Kamar?       @relation(fields: [kamarId], references: [id])
+  kamarId    String?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  absensi    Absensi[]
+}
+
+model Komplain {
+  id        String         @id @default(cuid())
+  subjek    String
+  deskripsi String         @db.Text
+  status    StatusKomplain @default(PENDING)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Kamar {
+  id         String @id @default(cuid())
+  nomorKamar String @unique
+  tipe       String // Misal: Deluxe, Standard
+  harga      Int
+  fasilitas  String @db.Text
+  penghuni   User[] // Satu kamar bisa diisi beberapa orang (opsional)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Pembayaran {
+  id         String      @id @default(cuid())
+  jumlah     Int
+  metode     String // BCA, Mandiri, Cash
+  buktiBayar String? // Nama file gambar
+  status     StatusBayar @default(PENDING)
+  catatan    String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Absensi {
+  id      String        @id @default(cuid())
+  tanggal DateTime      @default(now())
+  status  StatusAbsensi @default(HADIR)
+  catatan String?       @db.Text
+
+  // Relasi ke User (Petugas)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum StatusAbsensi {
+  HADIR
+  IZIN
+  ALFA
+}
+
+enum Role {
+  ADMIN
+  PEMILIK
+  PELANGGAN
+  PETUGAS
+}
+
+enum StatusKomplain {
+  PENDING
+  PROSES
+  SELESAI
+}
+
+enum StatusBayar {
+  PENDING
+  BERHASIL
+  GAGAL
+}
