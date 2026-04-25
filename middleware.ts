@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
-import { auth } from "@/auth"
-
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({ 
@@ -13,29 +11,28 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   const role = token?.role as string
 
-  if (pathname === '/' || pathname === '/pilih-kamar') {
+  // 1. IZINKAN AKSES TANPA SYARAT (Public Pages)
+  // Tambahkan path lain jika ada yang ingin dibuat publik
+  if (pathname === '/' || pathname === '/pilih-kamar' || pathname.startsWith('/_next')) {
     return NextResponse.next()
   }
 
-  // 1. Jika BELUM login & mencoba akses folder dashboard
+  // 2. PROTEKSI DASHBOARD (Jika belum login)
   if (!token && pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/', req.url))
+    return NextResponse.redirect(new URL('/login', req.url))
   }
 
-  // 2. Jika SUDAH login & mencoba akses /login atau /register
-  // Kita arahkan ke dashboard masing-masing
+  // 3. PROTEKSI LOGIN/REGISTER (Jika sudah login, tidak boleh balik ke sini)
   if (token && (pathname === '/login' || pathname === '/register')) {
     return redirectToFolder(role, req)
   }
 
-  // 3. LOGIKA UTAMA CARA KE-2: 
-  // Jika user akses ke "/dashboard" (tanpa sub-folder), 
-  // kita arahkan otomatis berdasarkan role-nya.
+  // 4. LOGIKA REDIRECT BERDASARKAN ROLE
   if (pathname === '/dashboard') {
     return redirectToFolder(role, req)
   }
 
-  // 4. PROTEKSI: Mencegah user masuk ke folder yang bukan haknya
+  // 5. PROTEKSI SUB-FOLDER DASHBOARD
   if (pathname.startsWith('/dashboard/admin') && role !== 'ADMIN') {
     return redirectToFolder(role, req)
   }
@@ -46,31 +43,34 @@ export async function middleware(req: NextRequest) {
     return redirectToFolder(role, req)
   }
 
-  if (pathname.startsWith('/dashboard') && !pathname.startsWith('/dashboard/admin') && !pathname.startsWith('/dashboard/pemilik') && !pathname.startsWith('/dashboard/petugas')) {
-    if (role === 'PELANGGAN') return NextResponse.next()
-    // Jika role lain (Admin/Petugas) iseng akses /dashboard/komplain (area pelanggan), lempar balik ke folder mereka
-    return redirectToFolder(role, req)
-  }
-
   return NextResponse.next()
 }
 
-// Fungsi pembantu agar tidak menulis ulang kode redirect
 function redirectToFolder(role: string, req: NextRequest) {
-  const { pathname } = req.nextUrl;
+  const url = req.nextUrl.clone()
+  
+  if (role === 'ADMIN') url.pathname = '/dashboard/admin'
+  else if (role === 'PEMILIK') url.pathname = '/dashboard/pemilik'
+  else if (role === 'PETUGAS') url.pathname = '/dashboard/petugas'
+  else url.pathname = '/dashboard' // Pelanggan
 
-  if (role === 'ADMIN') return NextResponse.redirect(new URL('/dashboard/admin', req.url));
-  if (role === 'PEMILIK') return NextResponse.redirect(new URL('/dashboard/pemilik', req.url));
-  if (role === 'PETUGAS') return NextResponse.redirect(new URL('/dashboard/petugas', req.url));
-  
-  // KHUSUS PELANGGAN: 
-  // Jika dia sudah di /dashboard, jangan di-redirect lagi (biar tidak loop)
-  if (pathname === '/dashboard') return NextResponse.next();
-  
-  // Jika dia di /login tapi rolenya PELANGGAN, baru lempar ke /dashboard
-  return NextResponse.redirect(new URL('/dashboard', req.url)); 
+  // Cegah loop jika tujuan sudah sama dengan asal
+  if (req.nextUrl.pathname === url.pathname) {
+    return NextResponse.next()
+  }
+
+  return NextResponse.redirect(url)
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"]
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 }
