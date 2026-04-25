@@ -1,18 +1,19 @@
 import Link from 'next/link'
-import { prisma } from '../app/lib/prisma'
+import { prisma } from './lib/prisma' // Pastikan path ke prisma benar
 import FooterPublic from '@/components/FooterPublic'
+import { redirect } from 'next/navigation'
+
 export const dynamic = 'force-dynamic'
 
 export default async function BerandaPage() {
-  // Kita ambil daftar tipe yang unik dan harga terendah untuk tiap tipe
-  // supaya "Mulai dari Rp..." selalu akurat
+  // Ambil daftar tipe yang unik dan harga terendah
   const daftarTipe = await prisma.kamar.findMany({
     select: {
       tipe: true,
       harga: true,
     },
     orderBy: {
-      harga: 'asc', // Urutkan dari yang termurah
+      harga: 'asc',
     },
   })
 
@@ -25,7 +26,7 @@ export default async function BerandaPage() {
 
       {/* Banner - First Impression */}
       <div className="w-full h-64 bg-gray-100 flex flex-col items-center justify-center p-8 text-center bg-gradient-to-b from-gray-200 to-white">
-        <h1 className="text-4xl font-black italic tracking-tighter text-gray-900 mb-2">KOSFRIENDLY.</h1>
+        <h1 className="text-4xl font-black italic tracking-tighter text-gray-900 mb-2 uppercase">KOSFRIENDLY.</h1>
         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.4em]">Temukan Kamar Impianmu</p>
       </div>
 
@@ -35,7 +36,7 @@ export default async function BerandaPage() {
           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-2">Pilih Tipe Hunian</p>
           
           {unikTipe.length === 0 ? (
-            <div className="bg-gray-50 border-2 border-dashed border-gray-100 rounded-[2.5rem] py-12 text-center italic text-gray-400 text-xs">
+            <div className="bg-gray-50 border-2 border-dashed border-gray-100 rounded-[2.5rem] py-12 text-center italic text-gray-400 text-xs font-bold uppercase tracking-widest">
               Belum ada tipe kamar yang tersedia.
             </div>
           ) : (
@@ -54,7 +55,7 @@ export default async function BerandaPage() {
                   </p>
                 </div>
                 <div className="bg-white p-3 rounded-2xl group-hover:bg-gray-800 transition-colors shadow-sm">
-                  <span className="text-gray-400 group-hover:text-white">→</span>
+                  <span className="text-gray-400 group-hover:text-white font-bold">→</span>
                 </div>
               </Link>
             ))
@@ -74,9 +75,8 @@ export default async function BerandaPage() {
 
       <div className="flex-1" />
 
-      {/* Footer Navigasi (WhatsApp, Lokasi, Email) */}
+      {/* Footer Navigasi */}
       <FooterPublic />
-
     </div>
   )
 }
