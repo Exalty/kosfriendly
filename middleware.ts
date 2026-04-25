@@ -19,7 +19,7 @@ export async function middleware(req: NextRequest) {
 
   // 1. Jika BELUM login & mencoba akses folder dashboard
   if (!token && pathname.startsWith('/dashboard')) {
-    return NextResponse.redirect(new URL('/login', req.url))
+    return NextResponse.redirect(new URL('/', req.url))
   }
 
   // 2. Jika SUDAH login & mencoba akses /login atau /register
