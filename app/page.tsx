@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { prisma } from '../app/lib/prisma'
 import FooterPublic from '@/components/FooterPublic'
+export const dynamic = 'force-dynamic'
 
 export default async function BerandaPage() {
   // Kita ambil daftar tipe yang unik dan harga terendah untuk tiap tipe
