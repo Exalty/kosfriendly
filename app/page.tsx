@@ -1,12 +1,12 @@
 import Link from 'next/link'
-import { prisma } from './lib/prisma' 
+import { prisma } from './lib/prisma'
 import FooterPublic from '@/components/FooterPublic'
 
 export const dynamic = 'force-dynamic'
 
 export default async function BerandaPage() {
   let unikTipe: any[] = []
-  
+
   try {
     // Kita coba ambil data, kalau gagal (karena koneksi), aplikasi tidak akan mati
     const daftarTipe = await prisma.kamar.findMany({
@@ -31,7 +31,7 @@ export default async function BerandaPage() {
       <div className="w-full max-w-lg mx-auto px-6 -mt-10 relative z-10">
         <div className="flex flex-col gap-4 py-6">
           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-2">Pilih Tipe Hunian</p>
-          
+
           {unikTipe.length === 0 ? (
             <div className="bg-gray-50 border-2 border-dashed border-gray-100 rounded-[2.5rem] py-12 text-center italic text-gray-400 text-xs font-bold uppercase tracking-widest">
               Gagal mengambil data atau kamar belum tersedia.
@@ -45,7 +45,7 @@ export default async function BerandaPage() {
               >
                 <div className="flex flex-col text-left">
                   <span className="text-lg font-black text-gray-800 group-hover:text-white uppercase">
-                    {kamar?.tipe}
+                    {kamar?.tipe || "Tipe Tidak Diketahui"}
                   </span>
                   <p className="text-[10px] text-gray-400 group-hover:text-gray-300 font-bold uppercase mt-1">
                     Mulai Rp {kamar?.harga?.toLocaleString('id-ID')}
