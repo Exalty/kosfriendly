@@ -8,17 +8,21 @@ export default async function BerandaPage() {
   let unikTipe: any[] = []
 
   try {
-    // TETAP gunakan k kecil karena Prisma Client men-generate fungsi dengan k kecil
     const daftarTipe = await prisma.kamar.findMany({
-      select: { tipe: true, harga: true },
+      select: {
+        tipe: true,
+        harga: true,
+      },
     });
 
-    // Tambahkan tipe (k: any) untuk menghilangkan error "implicitly has any type"
+    console.log("Data mentah dari DB:", daftarTipe); // Cek ini di Vercel Logs nanti
+
+    // Memastikan data unik (Reguler, Deluxe, Exclusive)
     unikTipe = Array.from(new Set(daftarTipe.map((k: any) => k.tipe)))
       .map(tipe => daftarTipe.find((k: any) => k.tipe === tipe));
 
   } catch (error) {
-    console.error("Database Error:", error);
+    console.error("Database Error Detail:", error);
   }
 
   return (
