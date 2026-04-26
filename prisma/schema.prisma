@@ -35,14 +35,14 @@ model Komplain {
 }
 
 model Kamar {
-  id         String   @id @default(cuid())
-  nomorKamar String   @unique
-  tipe       String
-  harga      Int
-  fasilitas  String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  penghuni   User[]
+  id          String   @id @default(cuid())
+  nomorKamar  String   @unique
+  tipe        String
+  harga       Int
+  fasilitas   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  penghuni    User[]
 
   @@map("Kamar")
 }

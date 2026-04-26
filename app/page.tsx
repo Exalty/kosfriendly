@@ -8,17 +8,17 @@ export default async function BerandaPage() {
   let unikTipe: any[] = []
 
   try {
-    // Kita coba ambil data, kalau gagal (karena koneksi), aplikasi tidak akan mati
     const daftarTipe = await prisma.kamar.findMany({
       select: { tipe: true, harga: true },
-      orderBy: { harga: 'asc' },
     })
+
+    // Log ini akan muncul di Vercel Logs jika datanya kosong
+    console.log("Data dari DB:", daftarTipe)
 
     unikTipe = Array.from(new Set(daftarTipe.map(k => k.tipe)))
       .map(tipe => daftarTipe.find(k => k.tipe === tipe))
   } catch (error) {
-    console.error("Database connection failed:", error)
-    // unikTipe tetap [] agar UI bawah tetap muncul
+    console.error("Error Database:", error)
   }
 
   return (
