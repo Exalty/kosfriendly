@@ -8,21 +8,20 @@ export default async function BerandaPage() {
   let unikTipe: any[] = []
 
   try {
+    // Kita coba ambil data, kalau gagal kita beri pesan spesifik di log
     const daftarTipe = await prisma.kamar.findMany({
-      select: {
-        tipe: true,
-        harga: true,
-      },
+      select: { tipe: true, harga: true },
     });
 
-    console.log("Data mentah dari DB:", daftarTipe); // Cek ini di Vercel Logs nanti
+    console.log("LOG: Data berhasil ditarik:", daftarTipe.length, "item ditemukan");
 
-    // Memastikan data unik (Reguler, Deluxe, Exclusive)
     unikTipe = Array.from(new Set(daftarTipe.map((k: any) => k.tipe)))
       .map(tipe => daftarTipe.find((k: any) => k.tipe === tipe));
 
-  } catch (error) {
-    console.error("Database Error Detail:", error);
+  } catch (error: any) {
+    // Ini akan memunculkan detail error yang lebih jelas di Vercel Logs
+    console.error("LOG: ERROR DATABASE DETAIL:", error.message);
+    console.error("LOG: ERROR CODE:", error.code);
   }
 
   return (
