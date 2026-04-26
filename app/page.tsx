@@ -11,7 +11,6 @@ export default async function BerandaPage() {
     // TETAP gunakan k kecil karena Prisma Client men-generate fungsi dengan k kecil
     const daftarTipe = await prisma.kamar.findMany({
       select: { tipe: true, harga: true },
-      orderBy: { harga: 'asc' },
     });
 
     // Tambahkan tipe (k: any) untuk menghilangkan error "implicitly has any type"
