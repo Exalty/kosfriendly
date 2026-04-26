@@ -12,7 +12,7 @@ export default async function BerandaPage() {
     const daftarTipe = await prisma.kamar.findMany({
       select: { tipe: true, harga: true },
     });
-
+    console.log("HASIL_DB:", JSON.stringify(daftarTipe));
     console.log("LOG: Data berhasil ditarik:", daftarTipe.length, "item ditemukan");
 
     unikTipe = Array.from(new Set(daftarTipe.map((k: any) => k.tipe)))
