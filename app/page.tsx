@@ -8,16 +8,19 @@ export default async function BerandaPage() {
   let unikTipe: any[] = []
 
   try {
-  const daftarTipe = await prisma.kamar.findMany({
-    select: { tipe: true, harga: true },
-  })
-  
-  // Memastikan data unik berdasarkan tipe (Reguler, Deluxe, Exclusive)
-  unikTipe = Array.from(new Set(daftarTipe.map(k => k.tipe)))
-    .map(tipe => daftarTipe.find(k => k.tipe === tipe))
-} catch (error) {
-  console.error("Database Error:", error)
-}
+    // TETAP gunakan k kecil karena Prisma Client men-generate fungsi dengan k kecil
+    const daftarTipe = await prisma.kamar.findMany({
+      select: { tipe: true, harga: true },
+      orderBy: { harga: 'asc' },
+    });
+
+    // Tambahkan tipe (k: any) untuk menghilangkan error "implicitly has any type"
+    unikTipe = Array.from(new Set(daftarTipe.map((k: any) => k.tipe)))
+      .map(tipe => daftarTipe.find((k: any) => k.tipe === tipe));
+
+  } catch (error) {
+    console.error("Database Error:", error);
+  }
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">
