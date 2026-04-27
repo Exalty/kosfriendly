@@ -18,6 +18,7 @@ export default async function BerandaPage() {
     unikTipe = Array.from(new Set(daftarTipe.map((k: any) => k.tipe)))
       .map(tipe => daftarTipe.find((k: any) => k.tipe === tipe));
 
+    console.log("LOG: URL DB YANG DIPAKAI:", process.env.DATABASE_URL?.split('@')[1]);
   } catch (error: any) {
     // Ini akan memunculkan detail error yang lebih jelas di Vercel Logs
     console.error("LOG: ERROR DATABASE DETAIL:", error.message);
