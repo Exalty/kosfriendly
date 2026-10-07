@@ -1,22 +1,47 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import Link from 'next/link'
-// Pastikan import action register kamu sudah benar di sini:
-// import { registerAction } from './action' 
 
 export default function RegisterForm() {
+  const router = useRouter()
   const searchParams = useSearchParams()
-  const error = searchParams.get('error')
+  const kamarId = searchParams.get('kamarId')
+  const [errorMessage, setErrorMessage] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Fungsi handle submit (sesuaikan dengan logic kamu)
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    // setLoading(true)
-    // logic registerAction
-    // setLoading(false)
+    setLoading(true)
+    setErrorMessage('')
+
+    const formData = new FormData(e.currentTarget)
+    const nama = formData.get('nama') as string
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+
+    try {
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nama, email, password, kamarId })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setErrorMessage(data.message || 'Pendaftaran gagal')
+        setLoading(false)
+        return
+      }
+
+      // Berhasil daftar, arahkan ke halaman login
+      router.push('/login?registered=true')
+    } catch (err) {
+      setErrorMessage('Terjadi gangguan jaringan atau server')
+      setLoading(false)
+    }
   }
 
   return (
@@ -28,10 +53,15 @@ export default function RegisterForm() {
         <p className="text-xs text-gray-400 mt-2 font-medium">Lengkapi data diri untuk akses KosFriendly</p>
       </header>
       
-      {/* Alert Error */}
-      {error && (
+      {/* Alert Error / Notification */}
+      {errorMessage && (
         <div className="bg-red-50 text-red-600 p-4 rounded-2xl mb-6 text-[10px] font-black uppercase tracking-widest text-center border border-red-100">
-          {error === 'CredentialsSignin' ? 'Email sudah terdaftar' : 'Terjadi Kesalahan'}
+          {errorMessage}
+        </div>
+      )}
+      {kamarId && (
+        <div className="bg-indigo-50 text-indigo-700 p-3 rounded-2xl mb-6 text-[10px] font-black uppercase tracking-widest text-center border border-indigo-100">
+          Mendaftar untuk pemesanan kamar terpilih
         </div>
       )}
 
