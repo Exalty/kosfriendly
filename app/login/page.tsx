@@ -18,21 +18,24 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
 
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false,
-    })
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      })
 
-if (result?.error) {
-  setError('Email atau password salah')
-  setLoading(false)
-} else {
-  // Paksa refresh agar session terbaca oleh middleware
-  router.refresh() 
-  // Cukup arahkan ke sini, sisanya urusan middleware
-  router.push('/dashboard') 
-}
+      if (result?.error) {
+        setError('Email atau password salah')
+        setLoading(false)
+      } else {
+        // Gunakan window.location agar browser melakukan full navigation dan cookie terbaca sempurna
+        window.location.href = '/dashboard'
+      }
+    } catch (err) {
+      setError('Terjadi kendala saat menghubungi server')
+      setLoading(false)
+    }
   }
 
   return (
