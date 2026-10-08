@@ -25,15 +25,19 @@ export default function LoginPage() {
         redirect: false,
       })
 
-      if (result?.error) {
-        setError('Email atau password salah')
+      console.log('SignIn response:', result)
+
+      if (!result || result.error) {
+        setError('Email atau kata sandi tidak cocok')
         setLoading(false)
-      } else {
-        // Gunakan window.location agar browser melakukan full navigation dan cookie terbaca sempurna
-        window.location.href = '/dashboard'
+        return
       }
-    } catch (err) {
-      setError('Terjadi kendala saat menghubungi server')
+
+      // Login berhasil
+      window.location.href = '/dashboard'
+    } catch (err: any) {
+      console.error('Login error:', err)
+      setError('Terjadi kendala koneksi ke server')
       setLoading(false)
     }
   }
