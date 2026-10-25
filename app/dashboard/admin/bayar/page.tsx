@@ -2,7 +2,7 @@ import { auth } from "@/auth"
 import { prisma } from "@/app/lib/prisma"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
-import Image from "next/image"
+import Link from "next/link"
 
 export default async function AdminBayarPage() {
   const session = await auth()
@@ -37,33 +37,36 @@ export default async function AdminBayarPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] p-6 font-sans">
+    <div className="min-h-screen bg-gray-50/50 p-6 font-sans text-gray-900">
       <div className="max-w-2xl mx-auto">
-        <header className="mb-10">
-          <p className="text-[10px] font-black text-indigo-600 uppercase tracking-[0.3em] mb-2">Finance Control</p>
-          <h1 className="text-4xl font-black italic tracking-tighter text-gray-900 uppercase leading-none">Verifikasi Bayar.</h1>
+        <header className="mb-8">
+          <Link href="/dashboard/admin" className="text-xs font-bold text-gray-500 hover:text-black uppercase tracking-wider mb-3 block">
+            ← Control Panel
+          </Link>
+          <p className="text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">Finance Control</p>
+          <h1 className="text-3xl font-black italic tracking-tight text-gray-950 uppercase leading-none">Verifikasi Pembayaran.</h1>
         </header>
 
         <div className="grid gap-6">
           {semuaPembayaran.length === 0 ? (
-            <div className="bg-white p-20 rounded-[3rem] text-center border-2 border-dashed border-gray-100">
-               <p className="text-[10px] font-black text-gray-300 uppercase italic">Belum ada data pembayaran.</p>
+            <div className="bg-white p-16 rounded-[2.5rem] text-center border-2 border-dashed border-gray-200">
+               <p className="text-sm font-semibold text-gray-400 italic">Belum ada data pembayaran masuk.</p>
             </div>
           ) : (
             semuaPembayaran.map((bayar) => (
-              <div key={bayar.id} className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+              <div key={bayar.id} className="bg-white p-7 rounded-[2rem] shadow-sm border border-gray-200">
                 {/* Header Kartu */}
                 <div className="flex justify-between items-start mb-6">
                   <div>
-                    <span className="text-[9px] font-black bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full uppercase tracking-widest">
-                      Kamar {bayar.user.kamar?.nomorKamar || "N/A"}
+                    <span className="text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 px-3 py-1 rounded-full uppercase tracking-wider">
+                      Kamar {bayar.user.kamar?.nomorKamar || "Belum Ada"}
                     </span>
-                    <h3 className="text-xl font-black text-gray-900 mt-2">{bayar.user.nama}</h3>
-                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">{bayar.metode} • {new Date(bayar.createdAt).toLocaleDateString('id-ID')}</p>
+                    <h3 className="text-xl font-black text-gray-950 mt-2">{bayar.user.nama}</h3>
+                    <p className="text-xs text-gray-500 font-medium mt-0.5">{bayar.metode} • {new Date(bayar.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[10px] font-black text-gray-400 uppercase mb-1">Jumlah</p>
-                    <p className="text-lg font-black italic text-gray-900 tracking-tighter">
+                    <p className="text-xs font-bold text-gray-500 uppercase mb-1">Jumlah</p>
+                    <p className="text-xl font-black text-blue-600 tracking-tight">
                       Rp {bayar.jumlah.toLocaleString('id-ID')}
                     </p>
                   </div>
@@ -72,36 +75,29 @@ export default async function AdminBayarPage() {
                 {/* Preview Bukti Bayar */}
                 {bayar.buktiBayar ? (
                   <div className="mb-6 group relative">
-                    <p className="text-[10px] font-black text-gray-400 uppercase mb-3 ml-1">Bukti Transfer:</p>
-                    <div className="relative h-64 w-full overflow-hidden rounded-[2rem] border border-gray-100 bg-gray-50">
+                    <p className="text-xs font-bold text-gray-600 uppercase mb-2 ml-1">Foto Bukti Transfer:</p>
+                    <div className="relative h-64 w-full overflow-hidden rounded-2xl border border-gray-200 bg-gray-50">
                       <img 
                         src={bayar.buktiBayar} 
                         alt="Bukti Transfer"
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="w-full h-full object-contain bg-black/5"
                       />
-                      <a 
-                        href={`/uploads/${bayar.buktiBayar}`} 
-                        target="_blank"
-                        className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
-                      >
-                        <span className="text-[10px] font-black text-white uppercase tracking-widest border border-white/50 px-4 py-2 rounded-full">Lihat Full Foto</span>
-                      </a>
                     </div>
                   </div>
                 ) : (
-                  <div className="mb-6 p-6 bg-red-50 rounded-2xl border border-red-100">
-                    <p className="text-[10px] font-bold text-red-500 uppercase text-center italic tracking-widest">⚠️ Tidak ada bukti foto</p>
+                  <div className="mb-6 p-4 bg-amber-50 rounded-2xl border border-amber-200 text-center">
+                    <p className="text-xs font-bold text-amber-700">⚠️ Tidak ada foto bukti yang dilampirkan</p>
                   </div>
                 )}
 
                 {/* Status & Action */}
-                <div className="flex items-center justify-between pt-6 border-t border-gray-50">
-                  <span className={`text-[10px] px-4 py-2 rounded-full font-black uppercase tracking-widest ${
-                    bayar.status === 'BERHASIL' ? 'bg-emerald-100 text-emerald-600' : 
-                    bayar.status === 'GAGAL' ? 'bg-red-100 text-red-600' : 
-                    'bg-orange-100 text-orange-600 animate-pulse'
+                <div className="flex items-center justify-between pt-5 border-t border-gray-100">
+                  <span className={`text-xs px-3.5 py-1.5 rounded-full font-bold uppercase tracking-wider ${
+                    bayar.status === 'BERHASIL' ? 'bg-emerald-100 text-emerald-800' : 
+                    bayar.status === 'GAGAL' ? 'bg-rose-100 text-rose-800' : 
+                    'bg-amber-100 text-amber-800'
                   }`}>
-                    {bayar.status}
+                    Status: {bayar.status}
                   </span>
 
                   {bayar.status === 'PENDING' && (
@@ -109,7 +105,7 @@ export default async function AdminBayarPage() {
                       <form action={konfirmasiBayar}>
                         <input type="hidden" name="id" value={bayar.id} />
                         <input type="hidden" name="status" value="GAGAL" />
-                        <button className="px-5 py-3 rounded-2xl border-2 border-red-100 text-red-600 text-[10px] font-black uppercase hover:bg-red-50 transition-all">
+                        <button className="px-4 py-2 rounded-xl border border-rose-300 text-rose-700 text-xs font-bold uppercase hover:bg-rose-50 transition-all cursor-pointer">
                           Tolak
                         </button>
                       </form>
@@ -117,8 +113,8 @@ export default async function AdminBayarPage() {
                       <form action={konfirmasiBayar}>
                         <input type="hidden" name="id" value={bayar.id} />
                         <input type="hidden" name="status" value="BERHASIL" />
-                        <button className="px-5 py-3 rounded-2xl bg-indigo-600 text-white text-[10px] font-black uppercase shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">
-                          Konfirmasi
+                        <button className="px-5 py-2 rounded-xl bg-gray-950 text-white text-xs font-bold uppercase hover:bg-black transition-all shadow-md cursor-pointer">
+                          Verifikasi Lunas ✓
                         </button>
                       </form>
                     </div>
