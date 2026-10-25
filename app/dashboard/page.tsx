@@ -1,4 +1,4 @@
-import { auth, signOut } from "@/auth" // Kita ambil signOut langsung dari auth
+import { auth, signOut } from "@/auth"
 import { prisma } from "@/app/lib/prisma"
 import { redirect } from "next/navigation"
 import Link from "next/link"
@@ -19,82 +19,96 @@ export default async function DashboardPage() {
   if (user.role === "PETUGAS") redirect("/dashboard/petugas")
 
   return (
-    <div className="min-h-screen bg-white p-6 font-sans">
-      <div className="max-w-md mx-auto pt-10">
+    <div className="min-h-screen bg-gray-50/50 p-6 font-sans text-gray-900">
+      <div className="max-w-md mx-auto pt-6">
 
         {/* HEADER */}
-        <header className="flex justify-between items-start mb-10">
+        <header className="flex justify-between items-start mb-8">
           <div>
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Penghuni</p>
-            <h1 className="text-4xl font-black italic tracking-tighter text-gray-900 uppercase leading-none">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Penghuni Kos</p>
+            <h1 className="text-3xl font-black italic tracking-tight text-gray-950 uppercase leading-none mt-1">
               {user.nama?.split(' ')[0]}
             </h1>
           </div>
 
-          {/* Form Logout Sederhana tanpa perlu komponen tambahan */}
           <form action={async () => {
             'use server'
             await signOut()
           }}>
-            <button type="submit" className="bg-gray-100 px-5 py-3 rounded-2xl hover:bg-black group transition-all">
-              <span className="text-[10px] font-black text-gray-400 group-hover:text-white uppercase tracking-widest">Exit</span>
+            <button 
+              type="submit" 
+              className="bg-white border border-gray-200 px-4 py-2.5 rounded-2xl hover:bg-gray-950 group transition-all shadow-sm"
+            >
+              <span className="text-xs font-bold text-gray-700 group-hover:text-white uppercase tracking-wider">Keluar</span>
             </button>
           </form>
         </header>
 
         {/* KARTU KAMAR ATAU BOOKING */}
-        <div className="mb-10">
+        <div className="mb-8">
           {user.kamar ? (
-            <div className="bg-black text-white p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+            <div className="bg-gray-950 text-white p-7 rounded-[2.5rem] shadow-xl relative overflow-hidden">
               <div className="absolute top-0 right-0 p-6 opacity-10">
                 <span className="text-8xl font-black italic leading-none">{user.kamar.nomorKamar}</span>
               </div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Kamar Kamu</p>
-              <h2 className="text-6xl font-black tracking-tighter mb-8 leading-none">{user.kamar.nomorKamar}</h2>
-              <div className="flex justify-between items-center border-t border-white/10 pt-6">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Tipe Unit</span>
-                <span className="text-sm font-black uppercase italic">{user.kamar.tipe}</span>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Kamar Aktif Anda</p>
+              <h2 className="text-5xl font-black tracking-tight mb-6 leading-none">Kamar {user.kamar.nomorKamar}</h2>
+              <div className="flex justify-between items-center border-t border-white/15 pt-5">
+                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Tipe Kamar</span>
+                <span className="text-sm font-black uppercase text-white">{user.kamar.tipe}</span>
               </div>
             </div>
           ) : (
-            <div className="bg-gray-50 border-2 border-dashed border-gray-200 p-12 rounded-[2.5rem] text-center flex flex-col items-center justify-center min-h-[300px]">
-              <div className="text-5xl mb-4">🏠</div>
-              <div className="mb-8">
-                <p className="text-gray-900 text-sm font-black uppercase italic">Belum ada kamar aktif.</p>
-                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">Silakan pilih unit tersedia</p>
+            <div className="bg-white border-2 border-dashed border-gray-300 p-8 rounded-[2.5rem] text-center flex flex-col items-center justify-center min-h-[260px] shadow-sm">
+              <div className="text-5xl mb-3">🏠</div>
+              <div className="mb-6">
+                <p className="text-gray-900 text-base font-bold">Belum Ada Kamar Aktif</p>
+                <p className="text-xs text-gray-500 font-medium mt-1">Pilih kamar yang tersedia untuk mulai menyewa</p>
               </div>
               <Link
-                href="/dashboard/booking"
-                className="bg-indigo-600 text-white px-8 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-indigo-100 active:scale-95 transition-all w-full text-center"
+                href="/pilih-kamar"
+                className="bg-gray-950 text-white px-6 py-3.5 rounded-2xl font-bold uppercase tracking-wider text-xs shadow-md hover:bg-black active:scale-95 transition-all w-full text-center"
               >
-                Cari Kamar Sekarang
+                Pilih Kamar Sekarang →
               </Link>
             </div>
           )}
         </div>
 
         {/* GRID MENU NAVIGASI */}
-        <div className="grid grid-cols-3 gap-4">
-          <Link href="/dashboard/bayar" className="bg-gray-50 p-6 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 group hover:bg-white hover:shadow-xl transition-all border border-transparent hover:border-gray-100 h-32">
-            <span className="text-2xl transition-transform group-hover:scale-110">💳</span>
-            <span className="text-[8px] font-black uppercase text-gray-400 group-hover:text-black tracking-widest text-center leading-tight">Bayar<br />Kos</span>
+        <div className="grid grid-cols-3 gap-3">
+          <Link 
+            href="/dashboard/bayar" 
+            className="bg-white p-5 rounded-2xl flex flex-col items-center justify-center gap-2 group hover:shadow-md transition-all border border-gray-200 hover:border-gray-950 h-32"
+          >
+            <span className="text-3xl transition-transform group-hover:scale-110">💳</span>
+            <span className="text-xs font-bold uppercase text-gray-800 group-hover:text-black tracking-normal text-center leading-tight">
+              Bayar<br />Sewa
+            </span>
           </Link>
 
-          <Link href="/dashboard/komplain" className="bg-gray-50 p-6 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 group hover:bg-white hover:shadow-xl transition-all border border-transparent hover:border-gray-100 h-32">
-            <span className="text-2xl transition-transform group-hover:scale-110">🛠️</span>
-            <span className="text-[8px] font-black uppercase text-gray-400 group-hover:text-black tracking-widest text-center leading-tight">Lapor<br />Masalah</span>
+          <Link 
+            href="/dashboard/komplain" 
+            className="bg-white p-5 rounded-2xl flex flex-col items-center justify-center gap-2 group hover:shadow-md transition-all border border-gray-200 hover:border-gray-950 h-32"
+          >
+            <span className="text-3xl transition-transform group-hover:scale-110">🛠️</span>
+            <span className="text-xs font-bold uppercase text-gray-800 group-hover:text-black tracking-normal text-center leading-tight">
+              Lapor<br />Keluhan
+            </span>
           </Link>
 
           <Link
             href="/dashboard/checkout"
-            className={`p-6 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 transition-all border border-transparent h-32 ${!user.kamar
-                ? 'opacity-20 pointer-events-none' // Mati jika tidak punya kamar
-                : 'bg-red-50/50 group hover:bg-red-500 hover:shadow-xl hover:shadow-red-100'
-              }`}
+            className={`p-5 rounded-2xl flex flex-col items-center justify-center gap-2 transition-all border h-32 ${
+              !user.kamar
+                ? 'opacity-40 pointer-events-none bg-gray-100 border-gray-200'
+                : 'bg-white border-gray-200 group hover:border-rose-500 hover:shadow-md'
+            }`}
           >
-            <span className="text-2xl transition-transform group-hover:scale-110 group-hover:brightness-200">🚪</span>
-            <span className={`text-[8px] font-black uppercase tracking-widest text-center leading-tight ${!user.kamar ? 'text-gray-400' : 'text-red-400 group-hover:text-white'
-              }`}>
+            <span className="text-3xl transition-transform group-hover:scale-110">🚪</span>
+            <span className={`text-xs font-bold uppercase tracking-normal text-center leading-tight ${
+              !user.kamar ? 'text-gray-400' : 'text-gray-800 group-hover:text-rose-600'
+            }`}>
               Check<br />Out
             </span>
           </Link>

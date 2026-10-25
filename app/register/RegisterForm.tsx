@@ -45,57 +45,70 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="w-full max-w-md p-10 bg-white rounded-[3rem] shadow-xl shadow-gray-100/50 border border-gray-100">
+    <div className="bg-white p-8 sm:p-10 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-200 text-gray-900">
       
-      {/* Header */}
-      <header className="mb-10 text-center">
-        <h1 className="text-4xl font-black italic tracking-tighter text-gray-900 uppercase leading-none">Daftar Akun.</h1>
-        <p className="text-xs text-gray-400 mt-2 font-medium">Lengkapi data diri untuk akses KosFriendly</p>
+      {/* Header Title */}
+      <header className="mb-8 text-center">
+        <div className="inline-flex items-center justify-center w-14 h-14 bg-gray-950 text-white rounded-2xl mb-4 text-2xl shadow-md">
+          ✨
+        </div>
+        <h1 className="text-3xl font-black italic tracking-tight text-gray-950 uppercase leading-none">
+          Daftar Akun
+        </h1>
+        <p className="text-xs text-gray-600 mt-2 font-medium">
+          Lengkapi data diri untuk memesan kamar KosFriendly
+        </p>
       </header>
       
       {/* Alert Error / Notification */}
       {errorMessage && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-2xl mb-6 text-[10px] font-black uppercase tracking-widest text-center border border-red-100">
+        <div className="bg-red-50 text-red-700 p-4 rounded-2xl mb-5 text-xs font-bold text-center border border-red-200">
           {errorMessage}
         </div>
       )}
       {kamarId && (
-        <div className="bg-indigo-50 text-indigo-700 p-3 rounded-2xl mb-6 text-[10px] font-black uppercase tracking-widest text-center border border-indigo-100">
-          Mendaftar untuk pemesanan kamar terpilih
+        <div className="bg-blue-50 text-blue-800 p-3.5 rounded-2xl mb-5 text-xs font-bold text-center border border-blue-200">
+          ✓ Mendaftar untuk pemesanan kamar terpilih
         </div>
       )}
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
         
-        <div className="space-y-1">
-          <label className="text-[10px] font-black text-gray-400 uppercase ml-3 tracking-widest">Nama Lengkap</label>
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-gray-700 uppercase ml-1 tracking-wider">
+            Nama Lengkap
+          </label>
           <input 
             name="nama" 
             placeholder="Misal: Alex Kurniawan" 
-            className="w-full p-5 bg-gray-50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-200 transition-all text-sm border border-gray-100" 
+            className="w-full py-3.5 px-4 bg-gray-50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-black focus:bg-white transition-all text-sm border border-gray-300 text-gray-900 placeholder:text-gray-400 font-medium" 
             required 
           />
         </div>
 
-        <div className="space-y-1">
-          <label className="text-[10px] font-black text-gray-400 uppercase ml-3 tracking-widest">Email Aktif</label>
+        <div className="space-y-1.5">
+          <label className="text-xs font-bold text-gray-700 uppercase ml-1 tracking-wider">
+            Alamat Email
+          </label>
           <input 
             name="email" 
             type="email" 
             placeholder="alex@email.com" 
-            className="w-full p-5 bg-gray-50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-200 transition-all text-sm border border-gray-100" 
+            className="w-full py-3.5 px-4 bg-gray-50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-black focus:bg-white transition-all text-sm border border-gray-300 text-gray-900 placeholder:text-gray-400 font-medium" 
             required 
           />
         </div>
 
-        <div className="space-y-1 mb-8">
-          <label className="text-[10px] font-black text-gray-400 uppercase ml-3 tracking-widest">Password</label>
+        <div className="space-y-1.5 mb-2">
+          <label className="text-xs font-bold text-gray-700 uppercase ml-1 tracking-wider">
+            Kata Sandi
+          </label>
           <input 
             name="password" 
             type="password" 
             placeholder="••••••••" 
-            className="w-full p-5 bg-gray-50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-indigo-200 transition-all text-sm border border-gray-100" 
+            className="w-full py-3.5 px-4 bg-gray-50 rounded-2xl focus:outline-none focus:ring-2 focus:ring-black focus:bg-white transition-all text-sm border border-gray-300 text-gray-900 placeholder:text-gray-400 font-medium" 
             required 
           />
         </div>
@@ -104,17 +117,17 @@ export default function RegisterForm() {
         <button 
           type="submit" 
           disabled={loading}
-          className="w-full bg-black text-white py-5 rounded-[2rem] font-black uppercase tracking-widest text-xs shadow-lg shadow-indigo-100 active:scale-95 transition-all disabled:opacity-50 mt-4"
+          className="w-full bg-gray-950 text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-xs shadow-lg active:scale-95 transition-all disabled:opacity-50 hover:bg-black mt-2"
         >
-          {loading ? 'MEMPROSES...' : 'DAFTAR SEKARANG →'}
+          {loading ? 'Memproses...' : 'Daftar Sekarang →'}
         </button>
       </form>
 
       {/* Footer Form */}
-      <p className="text-center text-xs text-gray-400 mt-8 font-medium">
+      <p className="text-center text-xs text-gray-600 mt-6 font-medium">
         Sudah punya akun?{' '}
-        <Link href="/login" className="font-bold text-black-600 hover:underline">
-          Login di sini
+        <Link href="/login" className="font-bold text-gray-950 hover:underline">
+          Masuk di sini
         </Link>
       </p>
     </div>
